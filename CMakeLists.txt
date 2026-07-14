@@ -7,6 +7,9 @@ set(KF_VERSION "6.28.0") # handled by release scripts
 set(KF_DEP_VERSION "6.28.0") # handled by release scripts
 project(KColorScheme VERSION ${KF_VERSION})
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include(FeatureSummary)
 find_package(ECM 6.28.0  NO_MODULE)
 set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://commits.kde.org/extra-cmake-modules")
@@ -87,4 +90,6 @@ install(FILES
 include(ECMFeatureSummary)
 ecm_feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h)
+list(FILTER ALL_CLANG_FORMAT_SOURCE_FILES EXCLUDE REGEX ".*\\.ccls-cache/.*")
 kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
