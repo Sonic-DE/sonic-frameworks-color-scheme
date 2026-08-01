@@ -20,8 +20,8 @@ target_sources(KF6ColorScheme PRIVATE
 qt_add_resources(KF6ColorScheme "color_schemes"
     PREFIX "/org.kde.kcolorscheme"
     FILES
-        color-schemes/BreezeDark.colors
-        color-schemes/BreezeLight.colors
+        color-schemes/SilverDark.colors
+        color-schemes/SilverLight.colors
     OUTPUT_TARGETS _rcc_targets
 )
 install(TARGETS ${_rcc_targets} EXPORT KF6ColorSchemeTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})

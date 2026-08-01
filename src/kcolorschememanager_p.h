@@ -44,8 +44,8 @@ public:
         return m_darkColorScheme;
     }
 
-    QString m_lightColorScheme = QStringLiteral("BreezeLight");
-    QString m_darkColorScheme = QStringLiteral("BreezeDark");
+    QString m_lightColorScheme = QStringLiteral("SilverLight");
+    QString m_darkColorScheme = QStringLiteral("SilverDark");
 };
 
 #endif
