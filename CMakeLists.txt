@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 David Redondo <kde@david-redondo.de>
 # SPDX-License-Identifier: BSD-2-Clause
 
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.30)
 
 set(KF_VERSION "6.30.0") # handled by release scripts
 set(KF_DEP_VERSION "6.30.0") # handled by release scripts
@@ -29,8 +29,9 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 include(CMakeDependentOption)
 include(ECMGenerateQDoc)
+include(ECMInstalledLibraryCheck)
 
-set(REQUIRED_QT_VERSION 6.9.0)
+set(REQUIRED_QT_VERSION 6.10.0)
 find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui)
 
 if (Qt6Gui_VERSION VERSION_GREATER_EQUAL "6.10.0")
