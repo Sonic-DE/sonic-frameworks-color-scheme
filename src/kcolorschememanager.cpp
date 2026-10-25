@@ -45,7 +45,8 @@ static bool isKdePlatformTheme()
         return true;
     }
 
-    if (qgetenv("XDG_CURRENT_DESKTOP") == "KDE" && QGuiApplicationPrivate::platformTheme()->name() == QLatin1String("xdgdesktopportal")) {
+    const auto desktops = qgetenv("XDG_CURRENT_DESKTOP").split(':');
+    if ((desktops.contains("SonicDE") || desktops.contains("KDE")) && QGuiApplicationPrivate::platformTheme()->name() == QLatin1String("xdgdesktopportal")) {
         return true;
     }
 
