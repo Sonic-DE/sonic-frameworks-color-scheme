@@ -8,4 +8,5 @@ find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Test)
 include(ECMAddTests)
 
 ecm_add_test(kcolorschemetest.cpp LINK_LIBRARIES Qt6::Test KF6::ColorScheme)
+ecm_add_test(ktoolsareatest.cpp LINK_LIBRARIES Qt6::Test KF6::ColorScheme KF6::GuiAddons)
 

@@ -15,6 +15,7 @@ target_sources(KF6ColorScheme PRIVATE
   kcolorschememanager.cpp
   kcolorschememodel.cpp
   kstatefulbrush.cpp
+  ktoolsarea.cpp
 )
 
 qt_add_resources(KF6ColorScheme "color_schemes"
@@ -63,6 +64,7 @@ ecm_generate_headers(KColorScheme_CamelCase_HEADERS
   KColorSchemeManager
   KColorSchemeModel
   KStatefulBrush
+  KToolsArea
 
   REQUIRED_HEADERS KColorScheme_HEADERS
 )
