@@ -2,7 +2,7 @@
 
 Sonic Frameworks Color Scheme lets SonicDE apps follow the light or dark color scheme you choose.
 
-## Unreleased
+## 6.31.0.1 (2026-11-10)
 
 - Apps now reliably follow your chosen color scheme in SonicDE sessions.
 - New: one shared place for the see-through titlebar and toolbar settings and their per-app exceptions, so window decorations, app styles and modern apps all apply them the same way. Behind the scenes: the new `KToolsArea` class, with automatic tests.
