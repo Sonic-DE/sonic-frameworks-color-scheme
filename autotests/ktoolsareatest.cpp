@@ -54,6 +54,8 @@ private Q_SLOTS:
     void testWriteSettings();
     void testSnapshot();
     void testMigrateFromSilver();
+    void testFollowDecoration_data();
+    void testFollowDecoration();
 
 private:
     void writeScheme(bool header);
@@ -313,6 +315,53 @@ void KToolsAreaTest::testMigrateFromSilver()
     toolsArea().writeEntry("ActiveOpacity", 80);
     QVERIFY(!KToolsArea::migrateFromSilver(m_scheme));
     QCOMPARE(KToolsArea::settings(m_scheme).activeOpacity, 80);
+}
+
+void KToolsAreaTest::testFollowDecoration_data()
+{
+    // Enabled before (invalid: no key), DisabledByDecoration before, decoration supports it;
+    // then whether anything changed, Enabled and DisabledByDecoration after.
+    QTest::addColumn<QVariant>("enabled");
+    QTest::addColumn<bool>("disabledByDecoration");
+    QTest::addColumn<bool>("supported");
+    QTest::addColumn<bool>("changed");
+    QTest::addColumn<bool>("enabledAfter");
+    QTest::addColumn<bool>("disabledByDecorationAfter");
+
+    QTest::newRow("unsupported turns an enabled area off") << QVariant(true) << false << false << true << false << true;
+    QTest::newRow("unsupported leaves a disabled area") << QVariant(false) << false << false << false << false << false;
+    QTest::newRow("unsupported leaves an unset area") << QVariant() << false << false << false << false << false;
+    QTest::newRow("unsupported keeps its earlier record") << QVariant(false) << true << false << false << false << true;
+    QTest::newRow("supported restores what a decoration turned off") << QVariant(false) << true << true << true << true << false;
+    QTest::newRow("supported keeps an area the user turned off") << QVariant(false) << false << true << false << false << false;
+    QTest::newRow("supported leaves an enabled area") << QVariant(true) << false << true << false << true << false;
+}
+
+void KToolsAreaTest::testFollowDecoration()
+{
+    QFETCH(QVariant, enabled);
+    QFETCH(bool, disabledByDecoration);
+    QFETCH(bool, supported);
+    QFETCH(bool, changed);
+    QFETCH(bool, enabledAfter);
+    QFETCH(bool, disabledByDecorationAfter);
+
+    if (enabled.isValid()) {
+        toolsArea().writeEntry("Enabled", enabled.toBool());
+    }
+    if (disabledByDecoration) {
+        toolsArea().writeEntry("DisabledByDecoration", true);
+    }
+    toolsArea().writeEntry("ActiveOpacity", 70);
+
+    QCOMPARE(KToolsArea::followDecoration(m_scheme, supported), changed);
+    QCOMPARE(KToolsArea::settings(m_scheme).enabled, enabledAfter);
+    QCOMPARE(toolsArea().readEntry("DisabledByDecoration", false), disabledByDecorationAfter);
+    // Only switched: the user's settings stay for when it is turned back on.
+    QCOMPARE(KToolsArea::settings(m_scheme).activeOpacity, 70);
+    if (!enabled.isValid() && !changed) {
+        QVERIFY(!toolsArea().hasKey("Enabled"));
+    }
 }
 
 QTEST_GUILESS_MAIN(KToolsAreaTest)

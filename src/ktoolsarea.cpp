@@ -353,3 +353,20 @@ bool KToolsArea::migrateFromSilver(const KSharedConfigPtr& scheme)
     silverrc->sync();
     return true;
 }
+
+bool KToolsArea::followDecoration(const KSharedConfigPtr& scheme, bool supported)
+{
+    KConfigGroup group = scheme->group(toolsAreaGroup);
+    const auto flags = KConfig::Normal | KConfig::Notify;
+    if (!supported && group.readEntry("Enabled", false)) {
+        group.writeEntry("Enabled", false, flags);
+        group.writeEntry("DisabledByDecoration", true, flags);
+    } else if (supported && group.readEntry("DisabledByDecoration", false)) {
+        group.writeEntry("Enabled", true, flags);
+        group.deleteEntry("DisabledByDecoration", flags);
+    } else {
+        return false;
+    }
+    scheme->sync();
+    return true;
+}

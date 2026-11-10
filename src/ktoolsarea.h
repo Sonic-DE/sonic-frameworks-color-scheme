@@ -109,6 +109,14 @@ public:
      * deletes them there. Returns whether it did.
      */
     static bool migrateFromSilver(const KSharedConfigPtr& scheme);
+
+    /*!
+     * Follows the window decoration: one that doesn't draw a translucent tools area
+     * (\a supported false) turns the tools area off, recording that it did
+     * (\c DisabledByDecoration); a supporting one turns a tools area turned off that way
+     * back on. Returns whether it changed anything.
+     */
+    static bool followDecoration(const KSharedConfigPtr& scheme, bool supported);
 };
 
 #endif
