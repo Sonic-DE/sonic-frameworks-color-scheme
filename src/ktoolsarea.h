@@ -117,6 +117,24 @@ public:
      * back on. Returns whether it changed anything.
      */
     static bool followDecoration(const KSharedConfigPtr& scheme, bool supported);
+
+    /*!
+     * The opacity of menus, 0–100 (100: opaque), from [Menus] \c Opacity. Widget styles
+     * that draw see-through menus follow it, whichever style is in use.
+     */
+    static int menuOpacity(const KSharedConfigPtr& scheme);
+
+    /*!
+     * Writes \a opacity as [Menus] \c Opacity, notifying watchers.
+     */
+    static void writeMenuOpacity(const KSharedConfigPtr& scheme, int opacity);
+
+    /*!
+     * Once: when [Menus] has no \c Opacity key yet, moves the Silver style's earlier menu
+     * opacity (silver/silverrc), or else the Breeze style's (breezerc), here and deletes it
+     * from both. Returns whether it wrote anything.
+     */
+    static bool migrateMenuOpacity(const KSharedConfigPtr& scheme);
 };
 
 #endif

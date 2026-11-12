@@ -4,7 +4,7 @@ Sonic Frameworks Color Scheme lets SonicDE apps follow the light or dark color s
 
 ## Unreleased
 
-- Behind the scenes: the see-through titlebar settings can now follow the window decoration, turning off with one that doesn't support them and back on with one that does, with automatic tests.
+- Behind the scenes: the see-through titlebar settings can now follow the window decoration, turning off with one that doesn't support them and back on with one that does, and app styles share one menu transparency setting, with automatic tests.
 
 ## 6.31.0.1 (2026-11-10)
 

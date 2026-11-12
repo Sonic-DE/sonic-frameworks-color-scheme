@@ -56,6 +56,9 @@ private Q_SLOTS:
     void testMigrateFromSilver();
     void testFollowDecoration_data();
     void testFollowDecoration();
+    void testMenuOpacity();
+    void testMigrateMenuOpacity_data();
+    void testMigrateMenuOpacity();
 
 private:
     void writeScheme(bool header);
@@ -361,6 +364,69 @@ void KToolsAreaTest::testFollowDecoration()
     QCOMPARE(KToolsArea::settings(m_scheme).activeOpacity, 70);
     if (!enabled.isValid() && !changed) {
         QVERIFY(!toolsArea().hasKey("Enabled"));
+    }
+}
+
+void KToolsAreaTest::testMenuOpacity()
+{
+    QCOMPARE(KToolsArea::menuOpacity(m_scheme), 100);
+    KToolsArea::writeMenuOpacity(m_scheme, 70);
+    QCOMPARE(KToolsArea::menuOpacity(m_scheme), 70);
+    KToolsArea::writeMenuOpacity(m_scheme, 140);
+    QCOMPARE(KToolsArea::menuOpacity(m_scheme), 100);
+    m_scheme->group(QStringLiteral("Menus")).writeEntry("Opacity", -5);
+    QCOMPARE(KToolsArea::menuOpacity(m_scheme), 0);
+}
+
+void KToolsAreaTest::testMigrateMenuOpacity_data()
+{
+    // Silver's and Breeze's MenuOpacity (-1: no key); then the shared value after.
+    QTest::addColumn<int>("silver");
+    QTest::addColumn<int>("breeze");
+    QTest::addColumn<bool>("migrated");
+    QTest::addColumn<int>("expected");
+
+    QTest::newRow("neither") << -1 << -1 << false << 100;
+    QTest::newRow("Silver") << 60 << -1 << true << 60;
+    QTest::newRow("Breeze") << -1 << 80 << true << 80;
+    QTest::newRow("Silver wins over Breeze") << 60 << 80 << true << 60;
+}
+
+void KToolsAreaTest::testMigrateMenuOpacity()
+{
+    QFETCH(int, silver);
+    QFETCH(int, breeze);
+    QFETCH(bool, migrated);
+    QFETCH(int, expected);
+
+    const KSharedConfigPtr silverrc = KSharedConfig::openConfig(QStringLiteral("silver/silverrc"));
+    const KSharedConfigPtr breezerc = KSharedConfig::openConfig(QStringLiteral("breezerc"));
+    for (const auto& [config, value] : {std::pair(silverrc, silver), std::pair(breezerc, breeze)}) {
+        KConfigGroup style = config->group(QStringLiteral("Style"));
+        style.deleteEntry("MenuOpacity");
+        if (value >= 0) {
+            style.writeEntry("MenuOpacity", value);
+        }
+        style.writeEntry("Other", true);
+        config->sync();
+    }
+
+    QCOMPARE(KToolsArea::migrateMenuOpacity(m_scheme), migrated);
+    QCOMPARE(KToolsArea::menuOpacity(m_scheme), expected);
+
+    // Moved from both styles; their other settings stay.
+    for (const KSharedConfigPtr& config : {silverrc, breezerc}) {
+        config->reparseConfiguration();
+        QVERIFY(!config->group(QStringLiteral("Style")).hasKey("MenuOpacity"));
+        QVERIFY(config->group(QStringLiteral("Style")).readEntry("Other", false));
+    }
+
+    // Once only.
+    if (migrated) {
+        silverrc->group(QStringLiteral("Style")).writeEntry("MenuOpacity", 10);
+        silverrc->sync();
+        QVERIFY(!KToolsArea::migrateMenuOpacity(m_scheme));
+        QCOMPARE(KToolsArea::menuOpacity(m_scheme), expected);
     }
 }
 

@@ -370,3 +370,38 @@ bool KToolsArea::followDecoration(const KSharedConfigPtr& scheme, bool supported
     scheme->sync();
     return true;
 }
+
+int KToolsArea::menuOpacity(const KSharedConfigPtr& scheme)
+{
+    return std::clamp(scheme->group(QStringLiteral("Menus")).readEntry("Opacity", 100), 0, 100);
+}
+
+void KToolsArea::writeMenuOpacity(const KSharedConfigPtr& scheme, int opacity)
+{
+    scheme->group(QStringLiteral("Menus")).writeEntry("Opacity", std::clamp(opacity, 0, 100), KConfig::Normal | KConfig::Notify);
+    scheme->sync();
+}
+
+bool KToolsArea::migrateMenuOpacity(const KSharedConfigPtr& scheme)
+{
+    if (scheme->group(QStringLiteral("Menus")).hasKey("Opacity")) {
+        return false;
+    }
+    // Silver's first: it is SonicDE's default style.
+    const KSharedConfigPtr styles[] = {KSharedConfig::openConfig(QStringLiteral("silver/silverrc")),
+        KSharedConfig::openConfig(QStringLiteral("breezerc"))};
+    bool written = false;
+    for (const KSharedConfigPtr& style : styles) {
+        KConfigGroup group = style->group(QStringLiteral("Style"));
+        if (!group.hasKey("MenuOpacity")) {
+            continue;
+        }
+        if (!written) {
+            writeMenuOpacity(scheme, group.readEntry("MenuOpacity", 100));
+            written = true;
+        }
+        group.deleteEntry("MenuOpacity");
+        style->sync();
+    }
+    return written;
+}
